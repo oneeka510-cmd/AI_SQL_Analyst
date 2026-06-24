@@ -4,6 +4,7 @@ Ask questions in plain English and get answers directly from your SQL database.
 
 AI SQL Analyst converts natural language questions into SQL queries, executes them against a database, and returns the results in human-readable language. It is designed for users who need insights from data without writing SQL manually.
 
+**Note:** This project is currently designed and tested specifically for **Microsoft SQL Server (MSSQL)**. SQL generation and query execution are optimized for SQL Server syntax.
 ---
 
 ## Why AI SQL Analyst?

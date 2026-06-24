@@ -106,7 +106,7 @@ Return Response
 * What is the average order value?
 
 ---
-
+```text
 AI-SQL-Analyst/
 │
 ├── app/
@@ -120,7 +120,7 @@ AI-SQL-Analyst/
 ├── .env.example
 ├── requirements.txt
 └── README.md
-
+```
 ---
 ## Installation
 

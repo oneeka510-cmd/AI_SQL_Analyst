@@ -2,3 +2,5 @@
 sqvenv/
 __pycache__/
 *.pyc
+image.png
+test.py

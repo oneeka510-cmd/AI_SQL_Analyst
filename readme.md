@@ -220,7 +220,6 @@ Product A generated the highest total revenue based on the available records.
 ## Future Improvements
 
 * Multi-table support
-* Query validation layer
 * Conversational memory
 * Data visualization
 * FastAPI API endpoints

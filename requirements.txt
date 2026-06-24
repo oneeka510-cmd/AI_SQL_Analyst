@@ -1,0 +1,9 @@
+langchain-openai
+python-dotenv
+pyodbc
+pandas
+openai
+
+
+
+

@@ -1,0 +1,4 @@
+.env
+sqvenv/
+__pycache__/
+*.pyc

@@ -1,237 +1,110 @@
-# AI SQL Analyst
-![alt text](image-1.png)
-Ask questions in plain English and get answers directly from your SQL database.
+# SQL AI Analyst
 
-AI SQL Analyst converts natural language questions into SQL queries, executes them against a database, and returns the results in human-readable language. It is designed for users who need insights from data without writing SQL manually.
+Ask questions in plain English and get safe, read-only answers from one SQL Server table.
 
-**Note:** This project is currently designed and tested specifically for **Microsoft SQL Server (MSSQL)**. SQL generation and query execution are optimized for SQL Server syntax.
----
+This project is built for the common reporting setup where Power BI or an upstream process has already joined the business data into a single table. The assistant reads that table schema, asks an LLM to produce SQL Server syntax, validates the generated SQL, executes it, and explains the result in plain English.
 
-## Why AI SQL Analyst?
+## Current Scope
 
-Many business users understand their data but are not comfortable writing SQL queries.
-
-Instead of writing:
-
-```sql
-SELECT COUNT(DISTINCT customer_id)
-FROM sales_data;
-```
-
-Users can simply ask:
-
-> How many unique customers are in the database?
-
-The application will:
-
-1. Generate the SQL query
-2. Execute it against the database
-3. Retrieve the results
-4. Explain the answer in plain English
-
----
-
-## Example
-
-### User Question
-
-> Which product generated the highest revenue?
-
-### Generated SQL
-
-```sql
-SELECT TOP 1
-    product_name,
-    SUM(revenue) AS total_revenue
-FROM sales_data
-GROUP BY product_name
-ORDER BY total_revenue DESC;
-```
-
-### Natural Language Response
-
-> Product A generated the highest total revenue based on the available records.
-
----
+- Database: Microsoft SQL Server
+- UI: Streamlit
+- Data model: exactly one configured table
+- SQL policy: read-only `SELECT` queries only
+- Blocked by design: joins, writes, stored procedures, temp tables, unrelated tables, and multi-statement SQL
 
 ## Features
 
-* Natural Language → SQL generation
-* SQL query execution
-* SQL validation layer
-* Natural language result explanations
-* SQL Server integration
-* Schema-aware prompting
-* Human-readable responses
-* Configurable database connection
-* Extensible architecture
-
----
+- Natural-language to SQL generation
+- Rich schema-aware prompting from live SQL Server metadata
+- Conservative SQL validation before execution
+- One automatic query repair attempt if validation or execution fails
+- Plain-English result explanation
+- Sidebar schema browser and sample-row preview
+- Query history for the current Streamlit session
+- Result metrics, quick bar charts, and full data table view
+- CSV and Excel downloads
+- Configurable table, model, row cap, and schema sample size
 
 ## How It Works
 
 ```text
-User Question
-      ↓
-Generate SQL Query
-      ↓
-Execute Query 
-      ↓
-Retrieve Results
-      ↓
-Generate Natural Language Answer
-      ↓
-Return Response
+User question
+      |
+Read configured table schema
+      |
+Generate single-table SQL Server SELECT
+      |
+Validate read-only SQL guardrails
+      |
+Execute query
+      |
+Explain, chart, and export results
 ```
-
----
 
 ## Tech Stack
 
-* Python
-* SQL Server
-* LangChain
-* OpenAI
-* Pandas
-* PyODBC
+- Python
+- SQL Server
+- Streamlit
+- LangChain OpenAI
+- Pandas
+- PyODBC
+- OpenPyXL
 
----
-
-## Example Questions
-
-* How many customers placed orders this month?
-* Which product generated the highest revenue?
-* What were the total sales last quarter?
-* Which employee handled the most orders?
-* Show the top 5 customers by spending.
-* What is the average order value?
-
----
-```text
-AI-SQL-Analyst/
-│
-├── app/
-│   ├── config.py
-│   ├── database.py
-│   ├── llm.py
-|   ├── validator.py
-│   ├── prompt_builder.py
-│   └── main.py
-│
-├── .env.example
-├── requirements.txt
-└── README.md
-```
----
 ## Installation
 
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/yourusername/AI-SQL-Analyst.git
-cd AI-SQL-Analyst
-```
-
-### 2. Create a Virtual Environment
+Create and activate a virtual environment:
 
 ```bash
 python -m venv sqvenv
-```
-
-Activate the environment:
-
-**Windows**
-
-```bash
 sqvenv\Scripts\activate
 ```
 
-**Linux / macOS**
-
-```bash
-source sqvenv/bin/activate
-```
-
-### 3. Install Dependencies
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
----
-
 ## Configuration
 
 Create a `.env` file in the project root.
 
-Example:
-
 ```env
 OPENAI_API_KEY=your_openai_api_key
+OPENAI_MODEL=gpt-4o
 
 DB_DRIVER=ODBC Driver 17 for SQL Server
 DB_SERVER=localhost
 DB_DATABASE=sample_database
 DB_UID=username
 DB_PWD=password
+DB_TRUST_SERVER_CERT=yes
+DB_TIMEOUT_SECONDS=5
 
 DEFAULT_TABLE=[dbo].[sample_table]
+DEFAULT_ROW_LIMIT=1000
+SCHEMA_SAMPLE_ROWS=8
 ```
 
----
+`DB_DATABASE` and `DEFAULT_TABLE` are used as the default selections in the Streamlit sidebar. Users can type a different database name and table name at runtime without editing `.env`, as long as the same SQL Server credentials can access them.
 
-## Running the Application
+## Running
 
 From the project root:
 
 ```bash
-python -m app.main
+streamlit run app.py
 ```
 
----
+## Example Questions
 
-## Example Usage
+- How many records are in this table?
+- Show the latest month of records for vessel X.
+- What is the total fuel consumption by vessel for January 2025?
+- Which records have the highest fuel consumption?
+- Show the monthly record count for the latest year in the data.
 
-Enter your question:
+## Notes
 
-```text
-Which product generated the highest revenue?
-```
-
-Generated SQL:
-
-```sql
-SELECT TOP 1
-    product_name,
-    SUM(revenue) AS total_revenue
-FROM sales_data
-GROUP BY product_name
-ORDER BY total_revenue DESC;
-```
-
-Response:
-
-```text
-Product A generated the highest total revenue based on the available records.
-```
-
----
-
-
-## Future Improvements
-
-* Multi-table support
-* Conversational memory
-* Data visualization
-* FastAPI API endpoints
-* Web UI
-* Role-based access control
-
----
-
-## Disclaimer
-
-This project is intended for educational and development purposes. Generated SQL should be validated before execution in production environments.
-
-
-
+Generated SQL is validated before execution, but this is still an assistant-driven analytics tool. Keep database permissions read-only for the configured user in production.

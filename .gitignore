@@ -3,4 +3,8 @@ sqvenv/
 __pycache__/
 *.pyc
 image.png
+image-1.png
 test.py
+test2.py
+image3.png
+app/

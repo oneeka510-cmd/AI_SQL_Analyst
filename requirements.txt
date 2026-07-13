@@ -3,6 +3,8 @@ python-dotenv
 pyodbc
 pandas
 openai
+streamlit
+openpyxl
 
 
 
